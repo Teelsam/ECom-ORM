@@ -21,7 +21,11 @@ router.get('/:id', async (req, res) => {
   // find a single tag by its `id`
   // be sure to include its associated Product data.
   try {
-    const oneTag = await Tag.findByPk(req.params.id, { include: [{ model: Product, attributes: ['product_name', 'price', 'stock', 'category_id'] }] });
+    const oneTag = await Tag.findByPk({
+      Where: { id: req.params.id }, include: [{
+        model: Product, attributes: ['product_name', 'price', 'stock', 'category_id']
+      }]
+    });
     if (!oneTag) {
       res.status(404).json({ message: 'no matching Tag' });
       return;
@@ -36,6 +40,7 @@ router.post('/', async (req, res) => {
   // create a new tag
   try {
     const newTag = await Tag.create({ tag_name: req.body.tag_name })
+    res.status(200).json(newTag);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -68,7 +73,7 @@ router.delete('/:id', async (req, res) => {
       }
     });
     if (!deleteTag) {
-      res.status(404).json({ message: 'no tag wit that id' });
+      res.status(404).json({ message: 'no tag with that id' });
       return;
     }
     res.status(200).json(deleteTag);
