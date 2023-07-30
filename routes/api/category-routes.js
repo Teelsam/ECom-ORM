@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
   // be sure to include its associated Products
   try {
     const allCat = await Category.findAll({
-      include: [{ model: Product }]
+      include: [{ model: Product, attributes: ['id', 'product_name', 'price', 'stock', 'category_id'] }]
     })
     res.status(200).json(allCat);
   } catch (err) {
@@ -20,7 +20,9 @@ router.get('/:id', async (req, res) => {
   // find one category by its `id` value
   // be sure to include its associated Products
   try {
-    const oneCat = await Category.findByPk(req.params.id, { include: [{ Product }] });
+    const oneCat = await Category.findByPk(req.params.id, {
+      include: [{ model: Product, attributes: ['id', 'product_name', 'price', 'stock', 'category_id'] }]
+    });
     if (!oneCat) {
       res.status(404).json({ message: 'No matching Category' });
       return;
@@ -35,7 +37,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   // create a new category
   try {
-    const newCat = await Category.create({ category_name: "undergarments" })
+    const newCat = await Category.create({ category_name: req.body.category_name });
     if (!newCat) {
       res.status(404).json({ message: 'New Category not created' });
       return;
