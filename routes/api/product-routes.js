@@ -9,8 +9,8 @@ router.get('/', async (req, res) => {
   // be sure to include its associated Category and Tag data
   try {
     const allProducts = await Product.findAll({
-      attributes: ['id', 'product_name', 'price', 'stock'],
-      include: [{ model: Category, attributes: ['category_name'] }, { model: Tag, attributes: ['tag_name'] }]
+      //attributes: ['id', 'product_name', 'price', 'stock'],
+      include: [Category, { model: Tag, through: ProductTag }]
     });
     res.status(200).json(allProducts);
   } catch (err) {
@@ -23,7 +23,7 @@ router.get('/:id', async (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
   try {
-    const oneProduct = await Product.findByPk(req.params.id, { include: [{ model: Category, attributes: ['category_name'] }, { model: Tag, attributes: ['tag_name'] }] })
+    const oneProduct = await Product.findByPk(req.params.id, { include: [{ model: Category, attributes: ['category_name'] }, { model: Tag, through: ProductTag, attributes: ['tag_name'] }] })
     if (!oneProduct) {
       res.status(404).json({ messager: 'no matching Product' });
       return;
@@ -36,7 +36,7 @@ router.get('/:id', async (req, res) => {
 
 // create new product
 router.post('/', async (req, res) => {
-  const newProduct = await Product.create({ product_name: "Basketball", price: 200.00, stock: 3, tagIds: [1, 2, 3, 4] });
+  //const newProduct = await Product.create({ product_name: "Basketball", price: 200.00, stock: 3, tagIds: [1, 2, 3, 4] });
   /* req.body should look like this...
     {
       product_name: "Basketball",
